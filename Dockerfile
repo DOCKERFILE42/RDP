@@ -21,7 +21,6 @@ RUN usermod -aG sudo user
 
 # Expose ports for RDP and VNC
 EXPOSE 3389
-EXPOSE 5901
 
 # Set default command to run when the container starts
 CMD service xrdp start && tail -f /dev/null
