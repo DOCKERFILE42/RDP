@@ -1,26 +1,15 @@
-# Use the official Ubuntu base image
-FROM ubuntu:latest
+# Use the official Windows Server Core base image
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
-# Set environment variables
-ENV DEBIAN_FRONTEND noninteractive
+# Install RDP and configure user
+RUN powershell -Command \
+    $username = 'Albin'; \
+    $password = 'Albin4242' | ConvertTo-SecureString -AsPlainText -Force; \
+    New-LocalUser -Name $username -Password $password -FullName $username -Description "Local Administrator"; \
+    Add-LocalGroupMember -Group administrators -Member $username; \
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0; \
+    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"; \
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y \
-    xfce4 \
-    xfce4-goodies \
-    tightvncserver \
-    xrdp \
-    sudo \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set up a default user (you can modify this as needed)
-RUN useradd -ms /bin/bash user
-RUN echo "user:password" | chpasswd
-RUN usermod -aG sudo user
-
-# Expose ports for RDP and VNC
+# Expose RDP port
 EXPOSE 3389
-
-# Set default command to run when the container starts
-CMD service xrdp start && tail -f /dev/null
