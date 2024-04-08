@@ -1,15 +1,22 @@
-# Use the official Windows Server Core base image
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+# Use a base Linux image (e.g., Ubuntu)
+FROM ubuntu:latest
 
-# Install RDP and configure user
-RUN powershell -Command \
-    $username = 'Albin'; \
-    $password = 'Albin4242' | ConvertTo-SecureString -AsPlainText -Force; \
-    New-LocalUser -Name $username -Password $password -FullName $username -Description "Local Administrator"; \
-    Add-LocalGroupMember -Group administrators -Member $username; \
-    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0; \
-    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"; \
-    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+# Update packages and install necessary software
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    xfce4 \
+    xrdp \
+    sudo \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure xrdp to use xfce desktop environment
+RUN sed -i 's/^new_cursors=true/new_cursors=false/g' /etc/xrdp/xrdp.ini && \
+    sed -i 's/^use_vsock=false/use_vsock=true/g' /etc/xrdp/xrdp.ini && \
+    echo xfce4-session > ~/.xsession
 
 # Expose RDP port
 EXPOSE 3389
+
+# Start xrdp service when the container starts
+CMD ["xrdp", "--nodaemon"]
