@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
 
 # Set up a default user (you can modify this as needed)
 RUN useradd -ms /bin/bash user
-RUN echo "Albin:Albin4242" | chpasswd
-RUN usermod -aG sudo Albin
+RUN echo "user:password" | chpasswd
+RUN usermod -aG sudo user
 
 # Expose ports for RDP and VNC
 EXPOSE 3389
