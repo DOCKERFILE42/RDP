@@ -1,6 +1,9 @@
 # Use the official Ubuntu base image
 FROM ubuntu:latest
 
+# Set environment variables to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     firefox \
@@ -12,19 +15,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the keyboard layout as an environment variable
-ENV TZ=UTC
-ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "tzdata tzdata/Areas select UTC" > preseed.txt; \
-    echo "tzdata tzdata/Zones/UTC select UTC" >> preseed.txt; \
-    debconf-set-selections preseed.txt && \
-    rm -f preseed.txt
-
-RUN apt-get install -y keyboard-configuration
-
-RUN echo "keyboard-configuration keyboard-configuration/layout select us" > /etc/debconf.conf
-RUN echo "keyboard-configuration keyboard-configuration/layoutcode select us" >> /etc/debconf.conf
-RUN dpkg-reconfigure -f noninteractive keyboard-configuration
+# Pre-define the keyboard layout selection for US
+RUN echo "keyboard-configuration keyboard-configuration/layout select us" | debconf-set-selections
 
 # Expose RDP port
 EXPOSE 3389
