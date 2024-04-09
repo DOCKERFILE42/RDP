@@ -1,20 +1,19 @@
 # Use an appropriate base image
-FROM node:14
+FROM ubuntu:latest
 
-# Set the working directory
-WORKDIR /app
+# Install necessary dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    chromium-browser \
+    xrdp \
+    xfce4 \
+    xfce4-goodies \
+    wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Expose the RDP port
+EXPOSE 3389
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Expose the port for the web server
-EXPOSE 3000
-
-# Command to run the application
-CMD ["npm", "start"]
+# Set the default command to launch RDP server
+CMD ["xrdp", "--nodaemon"]
