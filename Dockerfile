@@ -1,7 +1,10 @@
 # Use a base image with a Linux distribution
 FROM ubuntu:latest
 
-# Install necessary dependencies
+# Set the environment variable to avoid interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary dependencies, set the keyboard layout, and start XRDP service
 RUN apt-get update && \
     apt-get install -y \
     xrdp \
@@ -11,7 +14,6 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && sed -i 's/# KeyboardLayout/KeyboardLayout=us/' /etc/xrdp/xrdp_keyboard.ini
-    
 
 # Set the default display environment variable
 ENV DISPLAY=:1
@@ -19,5 +21,5 @@ ENV DISPLAY=:1
 # Expose the RDP port
 EXPOSE 3389
 
-# Start the RDP service
-CMD ["xrdp", "-n"]a
+# Start the XRDP service
+CMD ["xrdp", "-n"]
