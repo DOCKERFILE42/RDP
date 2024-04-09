@@ -1,25 +1,20 @@
-# Use the official Ubuntu base image
-FROM ubuntu:latest
+# Use an appropriate base image
+FROM node:14
 
-# Set environment variables to avoid interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
+# Set the working directory
+WORKDIR /app
 
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y \
-    firefox \
-    xrdp \
-    xfce4 \
-    xfce4-goodies \
-    dbus-x11 \
-    x11-xserver-utils \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Pre-define the keyboard layout selection for US
-RUN echo "keyboard-configuration keyboard-configuration/layout select us" | debconf-set-selections
+# Install dependencies
+RUN npm install
 
-# Expose RDP port
-EXPOSE 3389
+# Copy the rest of the application code
+COPY . .
 
-# Start the RDP service when the container starts
-CMD ["xrdp", "-n"]
+# Expose the port for the web server
+EXPOSE 3000
+
+# Command to run the application
+CMD ["npm", "start"]
