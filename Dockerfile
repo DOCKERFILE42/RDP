@@ -1,18 +1,19 @@
-# Use a base image with a Linux distribution
+# Use the official Ubuntu base image
 FROM ubuntu:latest
 
-# Install xrdp and XFCE desktop environment
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    firefox \
     xrdp \
     xfce4 \
     xfce4-goodies \
-    firefox \
+    dbus-x11 \
+    x11-xserver-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Expose RDP port
 EXPOSE 3389
 
-# Start xrdp service
+# Start the RDP service when the container starts
 CMD ["xrdp", "-n"]
