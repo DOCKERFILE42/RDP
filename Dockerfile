@@ -1,6 +1,10 @@
 # Use an appropriate base image
 FROM ubuntu:latest
 
+# Set the environment variable for the keyboard layout
+ENV DEBIAN_FRONTEND=noninteractive \
+    KEYBOARD_LAYOUT=us
+
 # Install necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -11,6 +15,9 @@ RUN apt-get update && \
     wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Set the default keyboard layout
+RUN echo "setxkbmap $KEYBOARD_LAYOUT" > /etc/profile.d/keyboard.sh
 
 # Expose the RDP port
 EXPOSE 3389
