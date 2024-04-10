@@ -1,23 +1,19 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
-# Install SSH server
-RUN apt-get update && \
-    apt-get install -y openssh-server && \
-    apt-get clean
+# Install Firefox browser
+RUN apt-get update && apt-get install -y firefox
 
-# Configure SSH
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-    echo "root:Albin4242" | chpasswd
+# Enable root access
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-# Expose SSH port
+# Enable SSH connection
+RUN mkdir /var/run/sshd
+
+# Expose port 22 for SSH connection
 EXPOSE 22
 
-# Expose VNC port
-EXPOSE 5900
-
-# Expose web port
-EXPOSE 6080
+# Expose port 6080 for VNC connection (already present in the original Dockerfile)
+EXPOSE 6070
 
 # Start SSH service
-CMD service ssh start && \
-    bash /startup.sh
+CMD ["/usr/sbin/sshd", "-D"]
