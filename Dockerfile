@@ -1,5 +1,12 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
+# Update package repository
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Create a non-root user for Supervisor
 RUN useradd -ms /bin/bash supervisor_user
 
@@ -11,13 +18,6 @@ RUN chown -R supervisor_user:supervisor_user /headless/.vnc
 
 # Switch to the non-root user
 USER supervisor_user
-
-# Update package repository
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # Install Firefox browser
 RUN apt-get update && apt-get install -y firefox
