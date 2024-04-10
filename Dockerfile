@@ -3,6 +3,9 @@ FROM dorowu/ubuntu-desktop-lxde-vnc
 # Create a non-root user for Supervisor
 RUN useradd -ms /bin/bash supervisor_user
 
+# Create the directory if it doesn't exist
+RUN mkdir -p /headless/.vnc
+
 # Change the ownership of the VNC directory to the non-root user
 RUN chown -R supervisor_user:supervisor_user /headless/.vnc
 
