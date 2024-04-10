@@ -1,5 +1,8 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
+# Import the missing GPG key for Google Chrome repository
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E88979FB9B30ACF2
+
 # Update package repository
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
