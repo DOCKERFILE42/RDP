@@ -1,26 +1,14 @@
-# Use an appropriate base image
-FROM ubuntu:latest
+FROM dorowu/ubuntu-desktop-lxde-vnc
 
-# Set the environment variable for the keyboard layout
-ENV DEBIAN_FRONTEND=noninteractive \
-    KEYBOARD_LAYOUT=us
+# Install wget and gdebi
+RUN apt-get update && apt-get install -y wget gdebi
 
-# Install necessary dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    chromium-browser \
-    xrdp \
-    xfce4 \
-    xfce4-goodies \
-    wget \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Download and install Google Chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN gdebi --n google-chrome-stable_current_amd64.deb
 
-# Set the default keyboard layout
-RUN echo "setxkbmap $KEYBOARD_LAYOUT" > /etc/profile.d/keyboard.sh
+# Install XRDP for RDP access
+RUN apt-get install -y xrdp
 
-# Expose the RDP port
+# Expose RDP port
 EXPOSE 3389
-
-# Set the default command to launch RDP server
-CMD ["xrdp", "--nodaemon"]
