@@ -1,14 +1,10 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
 # Update package repository
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Firefox browser
-RUN apt-get update && apt-get install -y firefox
+RUN RUN apt-get clean && apt-get update && apt-get install -y firefox
 
 # Enable root access and SSH (assuming you've already modified sshd_config)
 RUN mkdir /var/run/sshd
