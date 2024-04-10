@@ -1,10 +1,17 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
+# Import the missing GPG key for Google Chrome repository
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E88979FB9B30ACF2
+
 # Update package repository
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Firefox browser
-RUN RUN apt-get clean && apt-get update && apt-get install -y firefox
+RUN apt-get update && apt-get install -y firefox
 
 # Enable root access and SSH (assuming you've already modified sshd_config)
 RUN mkdir /var/run/sshd
