@@ -1,7 +1,13 @@
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
-# Import the missing GPG key for Google Chrome repository
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E88979FB9B30ACF2
+# Create a non-root user for Supervisor
+RUN useradd -ms /bin/bash supervisor_user
+
+# Change the ownership of the VNC directory to the non-root user
+RUN chown -R supervisor_user:supervisor_user /headless/.vnc
+
+# Switch to the non-root user
+USER supervisor_user
 
 # Update package repository
 RUN apt-get update && \
@@ -13,7 +19,7 @@ RUN apt-get update && \
 # Install Firefox browser
 RUN apt-get update && apt-get install -y firefox
 
-# Enable root access and SSH (assuming you've already modified sshd_config)
+# Enable SSH (assuming you've already modified sshd_config)
 RUN mkdir /var/run/sshd
 
 # Expose port 22 for SSH connection
